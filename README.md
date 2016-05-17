@@ -36,10 +36,10 @@ nsec3hash generates an NSEC3 hash based on a set of NSEC3 parameters. This can b
 ## EXAMPLE
 
 ``` shell
-$ nsec3hash github.com
-
-$ nsec3hash - 0 0 github.com
-
+$ ./nsec3hash github.com
+4KB4OKE0FL2II6J6AM0STI2SUC9LJAQ8
+$ ./nsec3hash - 1 0 github.com
+4KB4OKE0FL2II6J6AM0STI2SUC9LJAQ8
 ```
 
 ## References

@@ -34,7 +34,7 @@ func main() {
 Flags:
 	for i := 0; i < flag.NArg(); i++ {
 		// If it starts with @ it is a nameserver
-		if flag.Arg(i)[0] == '@' {
+		if len(flag.Arg(i)) > 0 && flag.Arg(i)[0] == '@' {
 			nameserver = flag.Arg(i)
 			continue Flags
 		}
@@ -105,6 +105,9 @@ Flags:
 		}
 	}
 
+	if salt == `-` {
+		salt = ``
+	}
 	if algorithm != 1 {
 		fmt.Fprintf(os.Stderr, "Unknown hash algorithm: %v\n", algorithm)
 		os.Exit(2)
