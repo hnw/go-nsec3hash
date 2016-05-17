@@ -7,6 +7,12 @@ nsec3hash(1) — generate NSEC3 hash
 nsec3hash <salt> <algorithm> <iterations> <domain>
 ```
 
+or
+
+```
+nsec3hash <domain>
+```
+
 ## DESCRIPTION
 
 nsec3hash generates an NSEC3 hash based on a set of NSEC3 parameters. This can be used to check the validity of NSEC3 records in a signed zone.

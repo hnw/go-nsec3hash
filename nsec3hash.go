@@ -56,6 +56,12 @@ Flags:
 	re, _ := regexp.Compile(`(\.+|\.*$)`)
 	domain = re.ReplaceAllString(domain, ".")
 
+	re, _ = regexp.Compile(`^\.+`)
+	domain = re.ReplaceAllString(domain, "")
+
+	re, _ = regexp.Compile(`^[^\.]+\.`)
+	parent := re.ReplaceAllString(domain, "")
+
 	if salt == `` {
 		if len(nameserver) == 0 {
 			conf, err := dns.ClientConfigFromFile("/etc/resolv.conf")
@@ -79,17 +85,23 @@ Flags:
 			nameserver = dns.Fqdn(nameserver) + ":" + strconv.Itoa(port)
 		}
 
-		in, _, err := dnssecQuery(nameserver, "jp.", dns.TypeNSEC3PARAM)
+		in, _, err := dnssecQuery(nameserver, parent, dns.TypeNSEC3PARAM)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			os.Exit(2)
 		}
+		foundNSEC3PARAM := false
 		for _, rr := range in.Answer {
 			if rr.Header().Rrtype == dns.TypeNSEC3PARAM {
 				algorithm = int(rr.(*dns.NSEC3PARAM).Hash)
 				iterations = int(rr.(*dns.NSEC3PARAM).Iterations)
 				salt = rr.(*dns.NSEC3PARAM).Salt
+				foundNSEC3PARAM = true
 			}
+		}
+		if !foundNSEC3PARAM {
+			fmt.Fprintf(os.Stderr, "No NSEC3PARAM Record for '%v'\n", parent)
+			os.Exit(2)
 		}
 	}
 
